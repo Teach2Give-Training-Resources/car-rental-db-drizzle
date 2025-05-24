@@ -1,4 +1,6 @@
-# Setting up Drizzle ORM
+# Car Rental Management System DB
+
+## Setting up Drizzle ORM
 
 * Drizzle ORM is a headless TypeScript ORM
 * It’s the only ORM with both relational and SQL-like query APIs, providing you best of both worlds when it comes to accessing your relational data.
@@ -7,11 +9,11 @@ At the end, you should have a folder structure like this:
 
 ![1748094531691](image/README/1748094531691.png)
 
-## Step 1: Setup TypeScript
+### Step 1: Setup TypeScript
 
 - Use the guide available on the Readme.md on gitHub: [setup ts with tsx](https://github.com/Teach2Give-Training-Resources/Setup-TypeScript-with-tsx "click the link")
 
-## step 2: Insatll Drizzle packages (dependancies and dev dependancies)
+###  step 2: Insatll Drizzle packages (dependancies and dev dependancies)
 
 ```shell
 pnpm add drizzle-orm pg dotenv
@@ -22,7 +24,7 @@ You should now have them installed and available in ***package.json***
 
 ![1747982775749](image/README/1747982775749.png)
 
-## step 3: Connecting to a database
+### step 3: Connecting to a database
 
 * Adding a connectoin string. Create a file on the root of the project called: ***.env*** and add the following connection.
 
@@ -30,7 +32,6 @@ You should now have them installed and available in ***package.json***
 # postgres://username:password@localhost:5432/mydatabase
 Database_URL=postgres://postgres:databasepass@localhost:5432/car_rental-db
 ```
-
 
 * The connection should be ignored from tracking by git.
 
@@ -44,12 +45,11 @@ dist
 .env
 ```
 
-## step 4: Write the schema
+### step 4: Write the schema
 
 * Create the ***Drizzle* **folder in ***src* **folder
 * Create a file called ***schema.ts***
 * This file will contain the definitions to the tables and the relationships
-
 * Paste the following table schema to the file
 
 ```ts
@@ -214,10 +214,10 @@ export const InsuranceRelations = relations(InsuranceTable, ({ one }) => ({
 }));
 ```
 
-## Step 5: Creating a connection to the database
+### Step 5: Creating a connection to the database
 
 * Create a file ***db.ts***
-*   ***db.ts*** will be responsible for connection to the database anytime we need to make any operation. Have the code below:
+* ***db.ts*** will be responsible for connection to the database anytime we need to make any operation. Have the code below:
 
 ```ts
   import "dotenv/config"
@@ -245,7 +245,7 @@ export const InsuranceRelations = relations(InsuranceTable, ({ one }) => ({
   export default db
 ```
 
-## Step 6: Configure Drizzle for your project
+### Step 6: Configure Drizzle for your project
 
 On the root of the project, create a file: ***drizzle.config.ts** , * the file will be used to configer drizzle for postgres
 
@@ -265,7 +265,7 @@ export default defineConfig({
 });
 ```
 
-## Step 7: Ready for Migrations
+### Step 7: Ready for Migrations
 
 * Back to the *Drizzle* folder, create a file and name it ***migrate.ts***
 * The file is responsible for migrations of the schema to the postgres server.
@@ -289,7 +289,7 @@ migration().catch((error) => {
 });
 ```
 
-## Step 8: Adding scripts to generate and migrate the schema
+### Step 8: Adding scripts to generate and migrate the schema
 
 * On your ***package.json*** file, add two scripts to generate and migrate the schema we have created.
 
@@ -298,7 +298,7 @@ migration().catch((error) => {
  "migrate":"tsx src/drizzle/migrate.ts"
 ```
 
-## Step 8: Run the generate command
+### Step 8: Run the generate command
 
 - Its now time to generate the migrations, on your terminal, run:
 
@@ -314,7 +314,7 @@ pnpm run generate
 
 ![1748094323743](image/README/1748094323743.png)
 
-## Step 9: Migrate your Shema to Postgres Server
+### Step 9: Migrate your Shema to Postgres Server
 
 * Its now time to migrate our schema to Postgres Server on our ,local machine:
 * On your terminal, run the command:
@@ -323,4 +323,9 @@ pnpm run generate
 pnpm run migrate
 ```
 
-* The command will excecute the connection to the database, creation of all the tables and closing the connection.
+-  The command will excecute the connection to the database, creation of all the tables and closing the connection.
+
+## Seeding the Database
+
+
+## Perfom CRUD Operations
