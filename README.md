@@ -13,7 +13,7 @@ At the end, you should have a folder structure like this:
 
 - Use the guide available on the Readme.md on gitHub: [setup ts with tsx](https://github.com/Teach2Give-Training-Resources/Setup-TypeScript-with-tsx "click the link")
 
-###  step 2: Insatll Drizzle packages (dependancies and dev dependancies)
+### step 2: Insatll Drizzle packages (dependancies and dev dependancies)
 
 ```shell
 pnpm add drizzle-orm pg dotenv
@@ -30,7 +30,7 @@ You should now have them installed and available in ***package.json***
 
 ```plaintext
 # postgres://username:password@localhost:5432/mydatabase
-Database_URL=postgres://postgres:databasepass@localhost:5432/car_rental-db
+Database_URL=postgres://postgres:yourpass@localhost:5432/car_rental-db
 ```
 
 * The connection should be ignored from tracking by git.
@@ -323,7 +323,7 @@ pnpm run generate
 pnpm run migrate
 ```
 
--  The command will excecute the connection to the database, creation of all the tables and closing the connection.
+- The command will excecute the connection to the database, creation of all the tables and closing the connection.
 
 ## Seeding the Database
 
@@ -516,3 +516,165 @@ pnpm run seed
 * The command will insert all the records in the tables and will be available for query
 
 ## Perfom CRUD Operations
+
+### Select
+
+* Select all Users
+
+  ```ts
+  const getAllCustomers = async () => {
+      return await db.query.CustomerTable.findMany()
+  }
+  ```
+* get customer by ID
+
+```ts
+const getCustomerById = async (customerID: number) => {
+    return await db.query.CustomerTable.findFirst({
+        where: eq(CustomerTable.customerID, customerID)
+    })
+}
+```
+
+- Customer with reservation
+
+  ```ts
+  const getCustomerWithReservations = async (customerID: number) => {
+      return await db.query.CustomerTable.findFirst({
+          where: eq(CustomerTable.customerID, customerID),
+          with: {
+              reservations: true
+          }
+      })
+  }
+  ```
+- customer with bookings
+
+```ts
+const getCustomerWithBookings = async (customerID: number) => {
+    return await db.query.CustomerTable.findFirst({
+        where: eq(CustomerTable.customerID, customerID),
+        with: {
+            bookings: {
+                columns: {
+                    carID: true,
+                    rentalStartDate: true,
+                    rentalEndDate: true,
+                    totalAmount: true
+                }
+            }
+        }
+    })
+}
+```
+
+* Using select to fetch specific details
+
+```ts
+const getCustomerWithSelectedDetails = async (customerID: number) => {
+    return await db.select({
+        firstName: CustomerTable.firstName,
+        lastName: CustomerTable.lastName,
+        email: CustomerTable.email,
+        phoneNumber: CustomerTable.phoneNumber
+    })
+        .from(CustomerTable)
+        .where(eq(CustomerTable.customerID, customerID));
+}
+```
+
+* Fetch Locations with all cars available
+
+```ts
+const getLocationsWithCars = async () => {
+    return await db.query.LocationTable.findMany({
+        with: {
+            cars: {
+                columns: {
+                    carModel: true,
+                    color: true,
+                    rentalRate: true,
+                    availability: true
+                }
+            }
+        }
+    })
+}
+```
+
+Fetch maintenance for all cars
+
+```ts
+const getCarsWithMaintenance = async () => {
+    return await db.query.CarTable.findMany({
+        with: {
+            maintenanceRecords: {
+                columns: {
+                    description: true,
+                    maintenanceDate: true,
+                    cost: true
+                }
+            }
+        }
+    })
+}
+```
+
+
+### Insert
+
+* Insert a new record of a user
+
+```ts
+const newCustomer = {
+    firstName: "Brian",
+    lastName: "Kemboi",
+    email: "kemboi@gmail.com",
+    phoneNumber: "0712345678",
+    address: "10 River Rd"
+};
+
+const insertCustomer = async (customer: TICustomer) => {
+    const insertedCustomer = await db.insert(CustomerTable).values(customer).returning();
+    return insertedCustomer;
+}
+```
+
+### Update
+
+* Update a user
+
+```ts
+const updateCustomer = async (email: string, updatedData: Partial<TICustomer>) => {
+    const updatedCustomer = await db.update(CustomerTable)
+        .set(updatedData)
+        .where(eq(CustomerTable.email, email))
+        .returning();
+    return updatedCustomer;
+}
+```
+
+### Delete
+
+* Delete a customer
+
+> ```ts
+> const deleteCustomer = async (customerID: number) => {
+>     const deletedCustomer = await db.delete(CustomerTable)
+>         .where(eq(CustomerTable.customerID, customerID))
+>         .returning();
+>     return deletedCustomer;
+> }
+> ```
+
+### Special Characters
+
+* Using like %
+
+```ts
+const searchCustomersByName = async (name: string) => {
+    return await db.query.CustomerTable.findMany({
+        where: like(CustomerTable.firstName, `%${name}%`)
+    })
+}
+```

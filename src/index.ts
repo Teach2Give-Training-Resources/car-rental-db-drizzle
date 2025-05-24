@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, like } from "drizzle-orm";
 import db from "./Drizzle/db";
 import { CarTable, CustomerTable, LocationTable, TICustomer, TSCustomer } from "./Drizzle/schema";
 
@@ -116,6 +116,13 @@ const deleteCustomer = async (customerID: number) => {
     return deletedCustomer;
 }
 
+// using like to search for customers by name
+const searchCustomersByName = async (name: string) => {
+    return await db.query.CustomerTable.findMany({
+        where: like(CustomerTable.firstName, `%${name}%`)
+    })
+}
+
 
 async function main() {
 
@@ -216,9 +223,24 @@ async function main() {
 
 
     // .............Delete a customer
-    const deletedCustomer = await deleteCustomer(10);
-    if (deletedCustomer.length > 0) {
-        console.log("Customer deleted successfully:", deletedCustomer[0]);//deletedCustomer[0] means the first element in the array
+    // const deletedCustomer = await deleteCustomer(10);
+    // if (deletedCustomer.length > 0) {
+    //     console.log("Customer deleted successfully:", deletedCustomer[0]);//deletedCustomer[0] means the first element in the array
+    // } else {
+    //     console.log("Failed to delete customer");
+    // }
+
+
+    // .............Search customers by name
+    const searchName = "Gr";
+    const foundCustomers = await searchCustomersByName(searchName);
+    if (foundCustomers.length > 0) {
+        console.log(`Customers found with name containing "${searchName}":`);
+        foundCustomers.forEach(customer => {
+            console.log(`- ${customer.firstName} ${customer.lastName}, Email: ${customer.email}`);
+        });
+    } else {
+        console.log(`No customers found with name containing "${searchName}"`);
     }
 }
 main().catch((error) => {
