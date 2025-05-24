@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "npm run build && node dist/index.js",
      "generate":"drizzle-kit generate",
-    "migrate":"tsx src/drizzle/migrate.ts"
+    "migrate":"tsx src/drizzle/migrate.ts",
+    "seed": "tsx src/Drizzle/seed.ts"
   },
   "keywords": [],
   "author": "kemboi",
